@@ -124,6 +124,45 @@ def generate_offspring_arithmetic_mean(parent1, parent2):
         offspring.append((parent1[i]+parent2[i]) / 2)
     return offspring
 
+def generate_offspring_onepoint(parent1,parent2):
+    offspring = []
+    p1f = calc_sol_fitness(parent1)
+    p2f = calc_sol_fitness(parent2)
+    if p1f < p2f:
+        for i in range(len(parent1)):
+            if i < n*(.75):
+                offspring.append(parent1[i])
+            else:
+                offspring.append(parent2[i])
+                
+    else:
+        for i in range(len(parent1)):
+            if i > n*(0.75):
+                offspring.append(parent1[i])
+            else:
+                offspring.append(parent2[i])
+        
+    return offspring
+
+def generate_offspring_random_biased(parent1,parent2):
+    offspring = []
+    p1f = calc_sol_fitness(parent1)
+    p2f = calc_sol_fitness(parent2)
+    if p1f < p2f:
+        for i in range(len(parent1)):
+            if random.random() < 0.75:
+                offspring.append(parent1[i])
+            else:
+                offspring.append(parent2[i])
+                
+    else:
+        for i in range(len(parent1)):
+            if random.random() < 0.25:
+                offspring.append(parent1[i])
+            else:
+                offspring.append(parent2[i])
+        
+    return offspring
 def crossover(parents, num_offsprings):
     offprings = []
     for k in range(num_offsprings):
