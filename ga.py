@@ -3,35 +3,35 @@ import math
 
 from numpy.random import choice
 
+N = 20
+sols_per_pop = 44
+num_gens = 1000
+num_parents_mating = 10
+MUTATION_LIMIT = 1
 
-n = 20
-sols_per_pop = 10
-num_gens = 4000
-num_parents_mating = 6
-MUTATION_LIMIT = 7
-
-coeff = random.sample(range(10, 30), n)
+coeff = random.sample(range(-30, 30), N)
 test_pts = random.sample(range(-100, 100), 100)
+
 
 def f(x, coeff):
     sum = 0
-    for i in range(n//2):
+    for i in range(N//2):
         sum += coeff[i] * math.cos(i*x)
-        sum += coeff[n//2+i] * math.sin((n//2+i)*x)
+        sum += coeff[N//2+i] * math.sin((N//2+i)*x)
     return sum
 
 def generate_initial_population():
     population = []
     for i in range(sols_per_pop):
-        sol =  random.sample(range(0, 100), n)
+        sol =  random.sample(range(0, 100), N)
         population.append(sol)
     return population
 
 def calc_sol_fitness(sol):
     error = 0
     for pt in test_pts:
-        error += abs(f(pt, coeff) - f(pt, sol))
-    return error
+        error += (f(pt, coeff)-f(pt, sol))*(f(pt, coeff)-f(pt, sol))
+    return math.sqrt(error / len(test_pts))
 
 def calc_sol_perc_error(sol):
     error = 0
@@ -68,6 +68,7 @@ def get_prob_with_ranking(fitness):
     probs = [p/probs_sum for p in probs_tmp]
     return probs
 
+
 def select_mating_pool_by_roulette(pop, fitness, num_parents):
     ret_idx = set()
     probs = get_prob_with_ranking(fitness)
@@ -87,6 +88,7 @@ def generate_offspring_alternate_pick(parent1, parent2):
             offspring.append(parent2[i])
     return offspring
 
+
 def generate_offspring_random_pick(parent1, parent2):
     offspring = []
     for i in range(len(parent1)):
@@ -98,7 +100,7 @@ def generate_offspring_random_pick(parent1, parent2):
     return offspring
 
 def generate_offspring_heuristic(parent1, parent2):
-    alpha = 0.7
+    alpha = 0.5
     fit, weak = parent1, parent2
     if calc_sol_fitness(fit) > calc_sol_fitness(weak):
         fit, weak = weak, fit
@@ -124,7 +126,7 @@ def generate_offspring_arithmetic_mean(parent1, parent2):
         offspring.append((parent1[i]+parent2[i]) / 2)
     return offspring
 
-def generate_offspring_onepoint(parent1,parent2):
+def generate_offspring_onepoint(parent1, parent2):
     offspring = []
     p1f = calc_sol_fitness(parent1)
     p2f = calc_sol_fitness(parent2)
@@ -134,41 +136,39 @@ def generate_offspring_onepoint(parent1,parent2):
                 offspring.append(parent1[i])
             else:
                 offspring.append(parent2[i])
-                
     else:
         for i in range(len(parent1)):
             if i > n*(0.75):
                 offspring.append(parent1[i])
             else:
                 offspring.append(parent2[i])
-        
     return offspring
 
-def generate_offspring_random_biased(parent1,parent2):
+def generate_offspring_random_biased(parent1, parent2):
     offspring = []
     p1f = calc_sol_fitness(parent1)
     p2f = calc_sol_fitness(parent2)
     if p1f < p2f:
         for i in range(len(parent1)):
-            if random.random() < 0.75:
+            if random.random() < 0.7:
                 offspring.append(parent1[i])
             else:
-                offspring.append(parent2[i])
-                
+                offspring.append(parent2[i])       
     else:
         for i in range(len(parent1)):
-            if random.random() < 0.25:
-                offspring.append(parent1[i])
-            else:
+            if random.random() < 0.7:
                 offspring.append(parent2[i])
+            else:
+                offspring.append(parent1[i])
         
     return offspring
+
 def crossover(parents, num_offsprings):
     offprings = []
     for k in range(num_offsprings):
         parent_1 = parents[k % len(parents)]
         parent_2 = parents[(k+1) % len(parents)]
-        child = generate_offspring_alternate_pick(parent_1, parent_2)
+        child = generate_offspring_random_pick(parent_1, parent_2)
         offprings.append(child)
     return offprings
 
@@ -193,27 +193,46 @@ def best_solution_in_population(population):
             ret = sol
     return ret
 
+def add_offsprings(population, offspring_mutation, fitness):
+    idx_to_chop = []
+    for i in range(len(offspring_mutation)):
+        idx_of_max = fitness.index(max(fitness))
+        idx_to_chop.append(idx_of_max)
+        fitness[idx_of_max] = -1000000000
+
+    for i in range(len(offspring_mutation)):
+        population[idx_to_chop[i]] = offspring_mutation[i]
+    return population 
+
+
+def add_offsprings_with_prob(population, offspring_mutation, fitness):
+    tmp = sorted(fitness)
+    bb = [tmp.index(f) for f in fitness]
+    probs = [x/sum(bb) for x in bb]
+    indexes = []
+    while len(indexes) != len(offspring_mutation):
+        idx = choice(range(len(probs)), p=probs)
+        if idx not in indexes:
+            indexes.append(idx)
+    for i in range(len(offspring_mutation)):
+        idx = indexes[i]
+        population[idx] = offspring_mutation[i]
+    return population
+
+
 def main():
     global MUTATION_LIMIT
-
     population = generate_initial_population()
     print(best_solution_in_population(population))
 
     for gen in range(num_gens):
-        MUTATION_LIMIT += 0.0
+        #MUTATION_LIMIT -= 0.001
         fitness = calc_pop_fitness(population)
         print("gen={g}, min_fitness={mf}".format(g=gen, mf=min(fitness)))
         parents = select_mating_pool_by_roulette(population, fitness, num_parents_mating)
         offspring_crossover = crossover(parents, num_offsprings=len(population)-len(parents))
         offspring_mutation = mutation(offspring_crossover)
-        idx_to_chop = []
-        for i in range(len(offspring_mutation)):
-            idx_of_max = fitness.index(max(fitness))
-            idx_to_chop.append(idx_of_max)
-            fitness[idx_of_max] = -1000000000
-
-        for i in range(len(offspring_mutation)):
-            population[idx_to_chop[i]] = offspring_mutation[i]
+        population = add_offsprings_with_prob(population, offspring_mutation, fitness)
 
     print(coeff)
     print(best_solution_in_population(population))
