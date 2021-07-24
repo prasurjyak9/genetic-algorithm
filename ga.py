@@ -4,13 +4,13 @@ import math
 from numpy.random import choice
 
 N = 20
-sols_per_pop = 44
+sols_per_pop = 88
 num_gens = 1000
-num_parents_mating = 10
+num_parents_mating = 22
 MUTATION_LIMIT = 1
 
 coeff = random.sample(range(-30, 30), N)
-test_pts = random.sample(range(-100, 100), 100)
+test_pts = random.sample(range(-1000, 1000), 150)
 
 
 def f(x, coeff):
@@ -168,7 +168,7 @@ def crossover(parents, num_offsprings):
     for k in range(num_offsprings):
         parent_1 = parents[k % len(parents)]
         parent_2 = parents[(k+1) % len(parents)]
-        child = generate_offspring_random_pick(parent_1, parent_2)
+        child = generate_offspring_random_biased(parent_1, parent_2)
         offprings.append(child)
     return offprings
 
@@ -226,7 +226,6 @@ def main():
     print(best_solution_in_population(population))
 
     for gen in range(num_gens):
-        #MUTATION_LIMIT -= 0.001
         fitness = calc_pop_fitness(population)
         print("gen={g}, min_fitness={mf}".format(g=gen, mf=min(fitness)))
         parents = select_mating_pool_by_roulette(population, fitness, num_parents_mating)
