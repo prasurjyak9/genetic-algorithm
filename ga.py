@@ -1,6 +1,6 @@
 import random
 import math
-
+import timeit
 from numpy.random import choice
 
 N = 20
@@ -234,6 +234,7 @@ def add_offsprings_with_prob(population, offspring_mutation, fitness):
 
 
 def main():
+    start = timeit.default_timer()
     global MUTATION_LIMIT
     population = generate_initial_population()
     print(best_solution_in_population(population))
@@ -251,7 +252,9 @@ def main():
     print(best_solution_in_population(population))
 
     print(calc_sol_perc_error(best_solution_in_population(population)))
-
+    
+    stop = timeit.default_timer()
+    print('Time: ', stop - start) 
 
 if __name__ == '__main__':
     main()
