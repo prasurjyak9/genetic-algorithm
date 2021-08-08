@@ -178,6 +178,19 @@ def mutate_offspring(offspring):
     offspring[rand_idx] += rand_val
     return offspring
 
+
+def mutate_offspring_gd(offspring):
+    rand_idx = random.randrange(len(offspring))
+    rand_val = random.uniform(0, MUTATION_LIMIT)
+    offspring[rand_idx] += rand_val
+    err1 = calc_sol_fitness(offspring)
+    offspring[rand_idx] -= 2*rand_val
+    err2 = calc_sol_fitness(offspring)
+    if(err1<err2):
+        offspring[rand_idx] += 2*rand_val
+    return offspring
+
+
 def mutation(offspring_crossover):
     mutated_offsprings = []
     for offspring in offspring_crossover:
