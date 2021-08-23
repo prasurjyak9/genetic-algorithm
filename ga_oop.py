@@ -13,7 +13,7 @@ REPLACE   = 66
 coeff = random.sample(range(-30, 30), N)
 test_pts = random.sample(range(-1000, 1000), 150)
 MUTATION_LIMIT = 1
-GEN = 10
+GEN = 1000
 # -------------------------------------------------
 # choose xover and mutation function
 
@@ -74,7 +74,7 @@ class solution:
             self.genome[rand_idx] += 2*rand_val
             
         self.fitness = calc_sol_fitness(self.genome)
-        self.error   = calc_sol_perc_error(self.gnome)
+        self.error   = calc_sol_perc_error(self.genome)
             
     def mutate(self , choice= mutate_choice):
         if(choice==0):
@@ -95,7 +95,7 @@ def xover_alternate ( parent1 , parent2):
             a[i] = b[i]
     return solution(a)
 
-def xover_random(parnt1 , parent2):
+def xover_random(parent1 , parent2):
     a = parent1.genome.copy()
     b = parent2.genome
     for i in range(N):
