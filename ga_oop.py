@@ -3,8 +3,8 @@ import numpy as np
 import math
 import timeit
 from numpy.random import choice
+import matplotlib.pyplot as plt
 import sys
-
 
 N = 20
 POPSIZE = 88
@@ -32,6 +32,14 @@ def f(x, coeff):
         sum += coeff[i] * math.cos(i*x)
         sum += coeff[N//2+i] * math.sin((N//2+i)*x)
     return sum
+
+
+def plot(solution):
+	coeff = solution.genome
+	x =  list(range(-50, 50))
+	y = [f(i, coeff) for i in x]
+	plt.plot(x, y)
+	plt.show()
 
 def calc_sol_fitness(sol):
     error = 0
@@ -173,7 +181,6 @@ class population:
         self.best = min(self.pop, key=lambda x: x.fitness)
         self.best_fitness = self.best.fitness
         
-        
     def __str__(self):
         return "generation->"+str(self.gen)+" best fitness -> " + str(self.best_fitness)
     
@@ -201,6 +208,8 @@ class population:
 p = population()
 
 while p.gen < GEN:
+	if p.gen == 0:
+		plot(p.best)
 	print(p)
 	p.next_gen()
 
@@ -208,3 +217,4 @@ print("solution")
 print(p.best)
 print("best fitness ")
 print(p.best.fitness)
+plot(p.best)
