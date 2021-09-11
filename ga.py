@@ -178,7 +178,6 @@ def mutate_offspring(offspring):
     offspring[rand_idx] += rand_val
     return offspring
 
-
 def mutate_offspring_gd(offspring):
     rand_idx = random.randrange(len(offspring))
     rand_val = random.uniform(0, MUTATION_LIMIT)
@@ -190,11 +189,16 @@ def mutate_offspring_gd(offspring):
         offspring[rand_idx] += 2*rand_val
     return offspring
 
+def mutate_offspring_swap(offspring):
+	idx1 = random.randrange(len(offspring))
+	idx2 = random.randrange(len(offspring))
+	offspring[idx1], offspring[idx2] = offspring[idx2], offspring[idx1]
+	return offspring
 
 def mutation(offspring_crossover):
     mutated_offsprings = []
     for offspring in offspring_crossover:
-        mutated_offsprings.append(mutate_offspring(offspring))
+        mutated_offsprings.append(mutate_offspring_swap(offspring))
     return mutated_offsprings
 
 def best_solution_in_population(population):
