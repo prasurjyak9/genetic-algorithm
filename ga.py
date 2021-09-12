@@ -194,11 +194,27 @@ def mutate_offspring_swap(offspring):
 	idx2 = random.randrange(len(offspring))
 	offspring[idx1], offspring[idx2] = offspring[idx2], offspring[idx1]
 	return offspring
+	
+def mutate_offspring_reverse(offspring):
+	idx1 = random.randrange(len(offspring))
+	idx2 = random.randrange(len(offspring))
+	l = min(idx1, idx2)
+	r = max(idx1, idx2)
+	offspring[l:r+1] = offspring[l:r+1][::-1]
+	return offspring
+
+def mutate_offspring_shuffle(offspring):
+	idx1 = random.randrange(len(offspring))
+	idx2 = random.randrange(len(offspring))
+	l = min(idx1, idx2)
+	r = max(idx1, idx2)
+	offspring[l:r+1] = random.sample(offspring[l:r+1], r-l+1)
+	return offspring
 
 def mutation(offspring_crossover):
     mutated_offsprings = []
     for offspring in offspring_crossover:
-        mutated_offsprings.append(mutate_offspring_swap(offspring))
+        mutated_offsprings.append(mutate_offspring_gd(offspring))
     return mutated_offsprings
 
 def best_solution_in_population(population):
