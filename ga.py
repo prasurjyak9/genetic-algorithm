@@ -168,7 +168,7 @@ def crossover(parents, num_offsprings):
     for k in range(num_offsprings):
         parent_1 = parents[k % len(parents)]
         parent_2 = parents[(k+1) % len(parents)]
-        child = generate_offspring_random_biased(parent_1, parent_2)
+        child = generate_offspring_random_pick(parent_1, parent_2)
         offprings.append(child)
     return offprings
 
@@ -214,7 +214,7 @@ def mutate_offspring_shuffle(offspring):
 def mutation(offspring_crossover):
     mutated_offsprings = []
     for offspring in offspring_crossover:
-        mutated_offsprings.append(mutate_offspring_gd(offspring))
+        mutated_offsprings.append(mutate_offspring_swap(offspring))
     return mutated_offsprings
 
 def best_solution_in_population(population):
@@ -241,6 +241,7 @@ def add_offsprings(population, offspring_mutation, fitness):
 def add_offsprings_with_prob(population, offspring_mutation, fitness):
     tmp = sorted(fitness)
     bb = [tmp.index(f) for f in fitness]
+    bb = [i+1 for i in bb]
     probs = [x/sum(bb) for x in bb]
     indexes = []
     while len(indexes) != len(offspring_mutation):
