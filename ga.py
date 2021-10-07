@@ -8,6 +8,7 @@ sols_per_pop = 88
 num_gens = 1000
 num_parents_mating = 22
 MUTATION_LIMIT = 1
+THRESHOLD_FITNESS = 0.1
 
 coeff = random.sample(range(-30, 30), N)
 test_pts = random.sample(range(-1000, 1000), 150)
@@ -214,7 +215,7 @@ def mutate_offspring_shuffle(offspring):
 def mutation(offspring_crossover):
     mutated_offsprings = []
     for offspring in offspring_crossover:
-        mutated_offsprings.append(mutate_offspring_swap(offspring))
+        mutated_offsprings.append(mutate_offspring(offspring))
     return mutated_offsprings
 
 def best_solution_in_population(population):
@@ -254,19 +255,50 @@ def add_offsprings_with_prob(population, offspring_mutation, fitness):
     return population
 
 
+# def main():
+#     start = timeit.default_timer()
+#     global MUTATION_LIMIT
+#     population = generate_initial_population()
+#     print(best_solution_in_population(population))
+
+#     for gen in range(num_gens):
+#         fitness = calc_pop_fitness(population)
+#         print("gen={g}, min_fitness={mf}".format(g=gen, mf=min(fitness)))
+#         parents = select_mating_pool_by_roulette(population, fitness, num_parents_mating)
+#         offspring_crossover = crossover(parents, num_offsprings=len(population)-len(parents))
+#         offspring_mutation = mutation(offspring_crossover)
+#         population = add_offsprings_with_prob(population, offspring_mutation, fitness)
+
+#     print(coeff)
+#     print(best_solution_in_population(population))
+
+#     print(calc_sol_perc_error(best_solution_in_population(population)))
+    
+#     stop = timeit.default_timer()
+#     print('Time: ', stop - start) 
+
+# if __name__ == '__main__':
+#     main()
+
 def main():
     start = timeit.default_timer()
     global MUTATION_LIMIT
     population = generate_initial_population()
     print(best_solution_in_population(population))
 
-    for gen in range(num_gens):
+    min_fitness = 10000000000
+    gen = 0
+
+    while min_fitness > THRESHOLD_FITNESS:
         fitness = calc_pop_fitness(population)
-        print("gen={g}, min_fitness={mf}".format(g=gen, mf=min(fitness)))
+        min_fitness = min(fitness)
+        print("gen={g}, min_fitness={mf}".format(g=gen, mf=min_fitness))
         parents = select_mating_pool_by_roulette(population, fitness, num_parents_mating)
         offspring_crossover = crossover(parents, num_offsprings=len(population)-len(parents))
         offspring_mutation = mutation(offspring_crossover)
         population = add_offsprings_with_prob(population, offspring_mutation, fitness)
+        gen += 1
+
 
     print(coeff)
     print(best_solution_in_population(population))
