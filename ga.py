@@ -1,6 +1,7 @@
 import random
 import math
 import timeit
+import matplotlib.pyplot as plt
 from numpy.random import choice
 
 N = 20
@@ -20,6 +21,14 @@ def f(x, coeff):
         sum += coeff[i] * math.cos(i*x)
         sum += coeff[N//2+i] * math.sin((N//2+i)*x)
     return sum
+
+def plot(coeff1, coeff2):
+    x =  list(range(-50, 50))
+    y1 = [f(i, coeff1) for i in x]
+    y2 = [f(i, coeff2) for i in x]
+    plt.plot(x, y1, 'r')
+    plt.plot(x, y2, 'b')
+    plt.show()
 
 def generate_initial_population():
     population = []
