@@ -14,6 +14,27 @@ THRESHOLD_FITNESS = 0.1
 coeff = random.sample(range(-30, 30), N)
 test_pts = random.sample(range(-1000, 1000), 150)
 
+'''
+mutate_offspring
+mutate_offspring_gd
+mutate_offspring_swap
+mutate_offspring_reverse
+mutate_offspring_shuffle
+'''
+MUTATE = "mutate_offspring"
+
+'''
+generate_offspring_alternate_pick
+generate_offspring_random_pick
+generate_offspring_heuristic
+generate_offspring_geometric_mean
+generate_offspring_arithmetic_mean_of_single_idx
+generate_offspring_arithmetic_mean
+generate_offspring_onepoint
+generate_offspring_random_biased
+'''
+CROSSOVER = "generate_offspring_random_pick"
+
 
 def f(x, coeff):
     sum = 0
@@ -178,7 +199,7 @@ def crossover(parents, num_offsprings):
     for k in range(num_offsprings):
         parent_1 = parents[k % len(parents)]
         parent_2 = parents[(k+1) % len(parents)]
-        child = generate_offspring_random_pick(parent_1, parent_2)
+        child = eval(CROSSOVER + "(parent_1, parent_2)")
         offprings.append(child)
     return offprings
 
@@ -224,7 +245,7 @@ def mutate_offspring_shuffle(offspring):
 def mutation(offspring_crossover):
     mutated_offsprings = []
     for offspring in offspring_crossover:
-        mutated_offsprings.append(mutate_offspring(offspring))
+        mutated_offsprings.append(eval(MUTATE + "(offspring)"))
     return mutated_offsprings
 
 def best_solution_in_population(population):
