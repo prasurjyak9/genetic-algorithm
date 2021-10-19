@@ -21,7 +21,7 @@ mutate_offspring_swap
 mutate_offspring_reverse
 mutate_offspring_shuffle
 '''
-MUTATE = "mutate_offspring"
+MUTATE = "mutate_offspring_gd"
 
 '''
 generate_offspring_alternate_pick
@@ -33,7 +33,7 @@ generate_offspring_arithmetic_mean
 generate_offspring_onepoint
 generate_offspring_random_biased
 '''
-CROSSOVER = "generate_offspring_random_pick"
+CROSSOVER = "generate_offspring_random_biased"
 
 
 def f(x, coeff):
