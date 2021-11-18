@@ -5,8 +5,8 @@ import numpy as np
 N_GENS = 600
 N_PARTICLES = 50
 N_COEFF = 20
-C1 = C2 = 0.7
-W = 0.8
+C1 = C2 = 0.3
+W = 0.3
 
 actual_coeff = np.random.rand(N_COEFF, 1)
 test_pts = np.linspace(-1000, 1000, num=100)
@@ -24,7 +24,7 @@ def f(x, coeff):
 def fitness(estimated_coeff):
 	error = 0
 	for pt in test_pts:
-		error += abs((f(pt, actual_coeff)-f(pt, estimated_coeff)/f(pt, actual_coeff)))
+		error += abs((f(pt, actual_coeff)-f(pt, estimated_coeff))/f(pt, actual_coeff))
 	return error
 
 pbest = X

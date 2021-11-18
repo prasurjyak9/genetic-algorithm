@@ -1,3 +1,14 @@
+'''
+M = mutation, C = crossover
+
+1. M=1, C=2
+2. M=1, C=8
+3. M=2, C=2
+4. M=2, C=8
+
+'''
+
+
 import random
 import math
 import timeit
@@ -11,29 +22,31 @@ num_parents_mating = 22
 MUTATION_LIMIT = 1
 THRESHOLD_FITNESS = 0.1
 
+random.seed(33)
+
 coeff = random.sample(range(-30, 30), N)
 test_pts = random.sample(range(-1000, 1000), 150)
 
 '''
-mutate_offspring
-mutate_offspring_gd
-mutate_offspring_swap
-mutate_offspring_reverse
-mutate_offspring_shuffle
+1. mutate_offspring
+2. mutate_offspring_gd
+3. mutate_offspring_swap
+4. mutate_offspring_reverse
+5. mutate_offspring_shuffle
 '''
-MUTATE = "mutate_offspring_gd"
+MUTATE = "mutate_offspring"
 
 '''
-generate_offspring_alternate_pick
-generate_offspring_random_pick
-generate_offspring_heuristic
-generate_offspring_geometric_mean
-generate_offspring_arithmetic_mean_of_single_idx
-generate_offspring_arithmetic_mean
-generate_offspring_onepoint
-generate_offspring_random_biased
+1. generate_offspring_alternate_pick
+2. generate_offspring_random_pick
+3. generate_offspring_heuristic
+4. generate_offspring_geometric_mean
+5. generate_offspring_arithmetic_mean_of_single_idx
+6. generate_offspring_arithmetic_mean
+7. generate_offspring_onepoint
+8. generate_offspring_random_biased
 '''
-CROSSOVER = "generate_offspring_random_biased"
+CROSSOVER = "generate_offspring_random_pick"
 
 
 def f(x, coeff):
@@ -67,7 +80,7 @@ def calc_sol_fitness(sol):
 def calc_sol_perc_error(sol):
     error = 0
     for pt in test_pts:
-        error += abs((f(pt, coeff) - f(pt, sol) / f(pt, coeff)))
+        error += abs((f(pt, coeff) - f(pt, sol)) / f(pt, coeff))
     return error
 
 def calc_pop_fitness(population):
@@ -225,7 +238,7 @@ def mutate_offspring_swap(offspring):
 	idx2 = random.randrange(len(offspring))
 	offspring[idx1], offspring[idx2] = offspring[idx2], offspring[idx1]
 	return offspring
-	
+
 def mutate_offspring_reverse(offspring):
 	idx1 = random.randrange(len(offspring))
 	idx2 = random.randrange(len(offspring))
@@ -319,7 +332,7 @@ def main():
     min_fitness = 10000000000
     gen = 0
 
-    while min_fitness > THRESHOLD_FITNESS:
+    while gen < 600:
         fitness = calc_pop_fitness(population)
         min_fitness = min(fitness)
         print("gen={g}, min_fitness={mf}".format(g=gen, mf=min_fitness))
@@ -330,8 +343,13 @@ def main():
         gen += 1
 
 
-    print(coeff)
-    print(best_solution_in_population(population))
+    print("crossover = ", CROSSOVER)
+    print("mutate = ", MUTATE)
+
+    print("coeff = ", coeff)
+    print("best sol = ", best_solution_in_population(population))
+
+    #plot(coeff, best_solution_in_population(population))
 
     print(calc_sol_perc_error(best_solution_in_population(population)))
     
