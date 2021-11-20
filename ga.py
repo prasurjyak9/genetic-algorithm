@@ -46,8 +46,12 @@ MUTATE = "mutate_offspring"
 7. generate_offspring_onepoint
 8. generate_offspring_random_biased
 '''
-CROSSOVER = "generate_offspring_random_pick"
+CROSSOVER = "generate_offspring_arithmetic_mean"
 
+
+why n=10
+anything more?
+mutation rate
 
 def f(x, coeff):
     sum = 0
@@ -332,7 +336,7 @@ def main():
     min_fitness = 10000000000
     gen = 0
 
-    while gen < 600:
+    while gen < 10:
         fitness = calc_pop_fitness(population)
         min_fitness = min(fitness)
         print("gen={g}, min_fitness={mf}".format(g=gen, mf=min_fitness))
