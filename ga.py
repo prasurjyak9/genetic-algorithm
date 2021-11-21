@@ -1,14 +1,3 @@
-'''
-M = mutation, C = crossover
-
-1. M=1, C=2
-2. M=1, C=8
-3. M=2, C=2
-4. M=2, C=8
-
-'''
-
-
 import random
 import math
 import timeit
@@ -17,41 +6,47 @@ from numpy.random import choice
 
 N = 20
 sols_per_pop = 88
-num_gens = 1000
+num_gens = 600
 num_parents_mating = 22
 MUTATION_LIMIT = 1
 THRESHOLD_FITNESS = 0.1
-
-random.seed(33)
 
 coeff = random.sample(range(-30, 30), N)
 test_pts = random.sample(range(-1000, 1000), 150)
 
 '''
-1. mutate_offspring
-2. mutate_offspring_gd
-3. mutate_offspring_swap
-4. mutate_offspring_reverse
-5. mutate_offspring_shuffle
+mutate_offspring
+mutate_offspring_gd
+mutate_offspring_swap
+mutate_offspring_reverse
+mutate_offspring_shuffle
 '''
-MUTATE = "mutate_offspring"
+MUTATES = ["mutate_offspring",
+"mutate_offspring_gd",
+"mutate_offspring_swap",
+"mutate_offspring_reverse",
+"mutate_offspring_shuffle",
+]
 
 '''
-1. generate_offspring_alternate_pick
-2. generate_offspring_random_pick
-3. generate_offspring_heuristic
-4. generate_offspring_geometric_mean
-5. generate_offspring_arithmetic_mean_of_single_idx
-6. generate_offspring_arithmetic_mean
-7. generate_offspring_onepoint
-8. generate_offspring_random_biased
+generate_offspring_alternate_pick
+generate_offspring_random_pick
+generate_offspring_heuristic
+generate_offspring_geometric_mean
+generate_offspring_arithmetic_mean_of_single_idx
+generate_offspring_arithmetic_mean
+generate_offspring_onepoint
+generate_offspring_random_biased
 '''
-CROSSOVER = "generate_offspring_arithmetic_mean"
 
-
-why n=10
-anything more?
-mutation rate
+CROSSOVERS = ["generate_offspring_alternate_pick",
+"generate_offspring_random_pick",
+"generate_offspring_heuristic",
+"generate_offspring_geometric_mean",
+"generate_offspring_arithmetic_mean_of_single_idx",
+"generate_offspring_arithmetic_mean",
+"generate_offspring_onepoint",
+"generate_offspring_random_biased"]
 
 def f(x, coeff):
     sum = 0
@@ -66,7 +61,8 @@ def plot(coeff1, coeff2):
     y2 = [f(i, coeff2) for i in x]
     plt.plot(x, y1, 'r')
     plt.plot(x, y2, 'b')
-    plt.show()
+    plt.savefig(MUTATE+"_"+CROSSOVER)
+    #plt.show()
 
 def generate_initial_population():
     population = []
@@ -84,7 +80,7 @@ def calc_sol_fitness(sol):
 def calc_sol_perc_error(sol):
     error = 0
     for pt in test_pts:
-        error += abs((f(pt, coeff) - f(pt, sol)) / f(pt, coeff))
+        error += abs((f(pt, coeff) - f(pt, sol) / f(pt, coeff)))
     return error
 
 def calc_pop_fitness(population):
@@ -160,7 +156,7 @@ def generate_offspring_heuristic(parent1, parent2):
 def generate_offspring_geometric_mean(parent1, parent2):
     offspring = []
     for i in range(len(parent1)):
-        offspring.append(math.sqrt(parent1[i]*parent2[i]))
+        offspring.append(math.sqrt(abs(parent1[i]*parent2[i])))
     return offspring
 
 def generate_offspring_arithmetic_mean_of_single_idx(parent1, parent2):
@@ -180,13 +176,13 @@ def generate_offspring_onepoint(parent1, parent2):
     p2f = calc_sol_fitness(parent2)
     if p1f < p2f:
         for i in range(len(parent1)):
-            if i < n*(.75):
+            if i < N*(.75):
                 offspring.append(parent1[i])
             else:
                 offspring.append(parent2[i])
     else:
         for i in range(len(parent1)):
-            if i > n*(0.75):
+            if i > N*(0.75):
                 offspring.append(parent1[i])
             else:
                 offspring.append(parent2[i])
@@ -201,14 +197,14 @@ def generate_offspring_random_biased(parent1, parent2):
             if random.random() < 0.7:
                 offspring.append(parent1[i])
             else:
-                offspring.append(parent2[i])       
+                offspring.append(parent2[i])
     else:
         for i in range(len(parent1)):
             if random.random() < 0.7:
                 offspring.append(parent2[i])
             else:
                 offspring.append(parent1[i])
-        
+
     return offspring
 
 def crossover(parents, num_offsprings):
@@ -283,7 +279,7 @@ def add_offsprings(population, offspring_mutation, fitness):
 
     for i in range(len(offspring_mutation)):
         population[idx_to_chop[i]] = offspring_mutation[i]
-    return population 
+    return population
 
 
 def add_offsprings_with_prob(population, offspring_mutation, fitness):
@@ -320,9 +316,9 @@ def add_offsprings_with_prob(population, offspring_mutation, fitness):
 #     print(best_solution_in_population(population))
 
 #     print(calc_sol_perc_error(best_solution_in_population(population)))
-    
+
 #     stop = timeit.default_timer()
-#     print('Time: ', stop - start) 
+#     print('Time: ', stop - start)
 
 # if __name__ == '__main__':
 #     main()
@@ -334,9 +330,8 @@ def main():
     print(best_solution_in_population(population))
 
     min_fitness = 10000000000
-    gen = 0
-
-    while gen < 10:
+    
+    for gen in range(num_gens):
         fitness = calc_pop_fitness(population)
         min_fitness = min(fitness)
         print("gen={g}, min_fitness={mf}".format(g=gen, mf=min_fitness))
@@ -344,21 +339,21 @@ def main():
         offspring_crossover = crossover(parents, num_offsprings=len(population)-len(parents))
         offspring_mutation = mutation(offspring_crossover)
         population = add_offsprings_with_prob(population, offspring_mutation, fitness)
-        gen += 1
 
 
-    print("crossover = ", CROSSOVER)
-    print("mutate = ", MUTATE)
-
-    print("coeff = ", coeff)
-    print("best sol = ", best_solution_in_population(population))
-
-    #plot(coeff, best_solution_in_population(population))
+    #plot(coeff,best_solution_in_population(population))
+    print(coeff)
+    print(best_solution_in_population(population))
 
     print(calc_sol_perc_error(best_solution_in_population(population)))
-    
+
     stop = timeit.default_timer()
-    print('Time: ', stop - start) 
+    print('Time: ', stop - start)
 
 if __name__ == '__main__':
-    main()
+    for i1 in (0,1):
+        for i2 in (1,7):
+            CROSSOVER = CROSSOVERS[i2]
+            MUTATE = MUTATES[i1]
+            print(MUTATE +"_"+ CROSSOVER)
+            main()
