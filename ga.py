@@ -38,6 +38,7 @@ generate_offspring_arithmetic_mean
 generate_offspring_onepoint
 generate_offspring_random_biased
 '''
+
 CROSSOVERS = ["generate_offspring_alternate_pick",
 "generate_offspring_random_pick",
 "generate_offspring_heuristic",
@@ -46,8 +47,6 @@ CROSSOVERS = ["generate_offspring_alternate_pick",
 "generate_offspring_arithmetic_mean",
 "generate_offspring_onepoint",
 "generate_offspring_random_biased"]
-
-
 
 def f(x, coeff):
     sum = 0
@@ -331,7 +330,7 @@ def main():
     print(best_solution_in_population(population))
 
     min_fitness = 10000000000
-
+    
     for gen in range(num_gens):
         fitness = calc_pop_fitness(population)
         min_fitness = min(fitness)

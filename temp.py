@@ -21,7 +21,7 @@ for line in lines:
 		gens.append(gen)
 		rmses.append(rmse)
 
-plt.plot(gens, rmses, 'r', label='random biased crossover + improved random mutation')
+plt.plot(gens, rmses, 'k--', label='random biased crossover + improved random mutation')
 #plt.show()
 
 with open(filename2) as file:
@@ -40,7 +40,7 @@ for line in lines:
 		gens.append(gen)
 		rmses.append(rmse)
 
-plt.plot(gens, rmses, 'g', label='random biased crossover + random mutation')
+plt.plot(gens, rmses, 'k-.', label='random biased crossover + random mutation')
 #plt.show()
 
 with open(filename3) as file:
@@ -59,7 +59,7 @@ for line in lines:
 		gens.append(gen)
 		rmses.append(rmse)
 
-plt.plot(gens, rmses, 'b', label='random pick crossover + improved random mutation')
+plt.plot(gens, rmses, 'k-', label='random pick crossover + improved random mutation')
 #plt.show()
 
 with open(filename4) as file:
@@ -78,7 +78,7 @@ for line in lines:
 		gens.append(gen)
 		rmses.append(rmse)
 
-plt.plot(gens, rmses, 'y', label='random pick crossover + random mutation')
+plt.plot(gens, rmses, 'k:', label='random pick crossover + random mutation')
 
 
 plt.xlabel('Generation')
